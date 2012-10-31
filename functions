@@ -1,0 +1,101 @@
+# -*-shell-script-*-
+
+. "$genapp_functions/core"
+
+find_java() {
+    _version=$(metadata java_version "system")
+    case "$_version" in
+        "1.6") echo "/opt/java6/bin/java";;
+        "1.7") echo "/opt/java7/bin/java";;
+        "1.8") echo "/opt/java8/jre/bin/java";;
+	"system") which java;;
+        *)
+	    echo "Unsupported java version $version" 1>&2
+	    return 1
+	    ;;
+    esac
+}
+
+install_app() {
+    echo "Copying application files to $app_dir/app"
+    mkdir $app_dir/app
+    cp -a $pkg_dir/* $app_dir/app
+    chmod g+w -R $app_dir/app
+}
+
+create_app_skel() {
+    echo "Creating application skeleton at $app_dir"
+    chmod 770 $app_dir
+    mkdir -m 770 $app_dir/tmp
+    mkdir -m 770 $app_dir/log
+    ln -s $log_dir/current $app_dir/log/current
+}
+
+java_classpath() {
+    _path=$(metadata java_classpath "")
+    _working="$app_dir/app"
+    for part in $(echo $_path | tr ":" "\n"); do
+        if [[ "$part" == /* ]]; then
+            # part is absolute - use as is
+            _working="$working:$part"
+        else
+            # part is relative - prepend $app_dir/app
+            _working="$working:$app_dir/app/$part"
+        fi
+    done
+    echo "$_working"
+}
+
+install_java_agent() {
+    echo "Installing genapp java agent"
+    _agent_jar_dest=$genapp_dir/lib/genapp-java.jar
+    _env_file=$control_dir/env
+    _agent_opts_file=$control_dir/jvm-opts-20-java-agent
+    install -D $plugin_dir/lib/genapp-java.jar $_agent_jar_dest
+    echo "-javaagent:$_agent_jar_dest=sys_prop:$_env_file" >> $_agent_opts_file
+}
+
+java_args() {
+    _args=$(metadata java_args "")
+    _escaped=$(escape_quotes "$_args")
+    echo "\"$_escaped\""
+}
+
+write_config() {
+    _config="$control_dir/config"
+    echo "Writing configuration to $_config"
+    _java=$(find_java)
+    echo "Using JVM at $_java"
+    _class=$(metadata java_class)
+    _classpath=$(java_classpath)
+    _resolved_classpath=$(expand "$_classpath")
+    _args=$(java_args)
+    _resolved_args=$(expand "$_args")
+    _escaped_resolved_args=$(escape_quotes "$_resolved_args")
+    echo "port=$app_port" >> $_config
+    echo "java=$_java" >> $_config
+    echo "tmp_dir=$app_dir/tmp" >> $_config
+    echo "class=$_class" >> $_config
+    echo "classpath=\"$_resolved_classpath\"" >> $_config
+    echo "args=\"$_escaped_resolved_args\"" >> $_config
+}
+
+jvm_opts() {
+    _opts=$(metadata java_opts "")
+    _escaped_opts=$(escape_quotes "$_opts")
+    echo "\"$_escaped_opts\""
+}
+
+write_jvm_opts() {
+    _config="$control_dir/jvm-opts-10-core"
+    echo "Writing jvm options to $_config"
+    _opts=$(jvm_opts)
+    _resolved_opts=$(expand "$_opts")
+    echo "$_resolved_opts" > $_config
+}
+
+write_control() {
+    echo "Writing control scripts to $control_dir"
+    install -m 750 $plugin_dir/control/start $control_dir
+    install -m 750 $plugin_dir/control/send_sigquit $control_dir
+}
