@@ -50,7 +50,7 @@ install_java_agent() {
     echo "Installing genapp java agent"
     _agent_jar_dest=$genapp_dir/lib/genapp-java.jar
     _env_file=$control_dir/env
-    _agent_opts_file=$control_dir/jvm-opts-20-java-agent
+    _agent_opts_file=$control_dir/java-opts-20-java-agent
     install -D $plugin_dir/lib/genapp-java.jar $_agent_jar_dest
     echo "-javaagent:$_agent_jar_dest=sys_prop:$_env_file" >> $_agent_opts_file
 }
@@ -65,7 +65,7 @@ write_config() {
     _config="$control_dir/config"
     echo "Writing configuration to $_config"
     _java=$(find_java)
-    echo "Using JVM at $_java"
+    echo "Using JAVA at $_java"
     _class=$(metadata java_class)
     _classpath=$(java_classpath)
     _resolved_classpath=$(expand "$_classpath")
@@ -80,16 +80,16 @@ write_config() {
     echo "args=\"$_escaped_resolved_args\"" >> $_config
 }
 
-jvm_opts() {
+java_opts() {
     _opts=$(metadata java_opts "")
     _escaped_opts=$(escape_quotes "$_opts")
     echo "\"$_escaped_opts\""
 }
 
-write_jvm_opts() {
-    _config="$control_dir/jvm-opts-10-core"
-    echo "Writing jvm options to $_config"
-    _opts=$(jvm_opts)
+write_java_opts() {
+    _config="$control_dir/java-opts-10-core"
+    echo "Writing java options to $_config"
+    _opts=$(java_opts)
     _resolved_opts=$(expand "$_opts")
     echo "$_resolved_opts" > $_config
 }
