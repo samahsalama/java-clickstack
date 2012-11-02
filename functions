@@ -34,24 +34,38 @@ create_app_skel() {
 java_classpath() {
     _path=$(metadata java_classpath "")
     _working="$app_dir/app"
-    for part in $(echo $_path | tr ":" "\n"); do
-        if [[ "$part" == /* ]]; then
+    for _part in $(echo $_path | tr ":" "\n"); do
+        if [[ "$_part" == /* ]]; then
             # part is absolute - use as is
-            _working="$working:$part"
+            _working="$_working:$_part"
         else
             # part is relative - prepend $app_dir/app
-            _working="$working:$app_dir/app/$part"
+            _working="$_working:$app_dir/app/$_part"
         fi
     done
     echo "$_working"
 }
 
+find_agent_jar() {
+    _local_jar=$plugin_dir/lib/genapp-java.jar
+    _java_embedded_jar=$plugin_dir/java/lib/genapp-java.jar
+    if [ -e $_local_jar ]; then
+	echo $_local_jar
+    elif [ -e $_java_embedded_jar ]; then
+	echo $_java_embedded_jar
+    else
+	echo "Cannot find agent jar in $plugin_dir" 1>&2
+	return 1
+    fi
+}
+
 install_java_agent() {
     echo "Installing genapp java agent"
+    _agent_jar=$(find_agent_jar)
     _agent_jar_dest=$genapp_dir/lib/genapp-java.jar
     _env_file=$control_dir/env
     _agent_opts_file=$control_dir/java-opts-20-java-agent
-    install -D $plugin_dir/lib/genapp-java.jar $_agent_jar_dest
+    install -D $_agent_jar $_agent_jar_dest
     echo "-javaagent:$_agent_jar_dest=sys_prop:$_env_file" >> $_agent_opts_file
 }
 
