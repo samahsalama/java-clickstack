@@ -3,7 +3,7 @@
 . "$genapp_functions/core"
 
 find_java() {
-    _version=$(metadata java_version "system")
+    _version=$(metadata java_version "1.7")
     case "$_version" in
         "1.6") echo "/opt/java6/bin/java";;
         "1.7") echo "/opt/java7/bin/java";;
