@@ -10,7 +10,7 @@ find_java() {
         "1.8") echo "/opt/java8/jre/bin/java";;
 	"system") which java;;
         *)
-	    echo "Unsupported java version $version" 1>&2
+	    echo "Unsupported java version $_version" 1>&2
 	    return 1
 	    ;;
     esac
