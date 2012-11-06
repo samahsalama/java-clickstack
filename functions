@@ -65,7 +65,8 @@ install_java_agent() {
     _agent_jar_dest=$genapp_dir/lib/genapp-java.jar
     _env_file=$control_dir/env
     _agent_opts_file=$control_dir/java-opts-20-java-agent
-    install -D $_agent_jar $_agent_jar_dest
+    mkdir -p $(dirname $_agent_jar_dest)
+    cp $_agent_jar $_agent_jar_dest
     echo "-javaagent:$_agent_jar_dest=sys_prop:$_env_file" >> $_agent_opts_file
 }
 
@@ -101,11 +102,11 @@ java_opts() {
 }
 
 write_java_opts() {
-    _config="$control_dir/java-opts-10-core"
-    echo "Writing java options to $_config"
+    _opts_file="$control_dir/java-opts-10-core"
+    echo "Writing java options to $_opts_file"
     _opts=$(java_opts)
     _resolved_opts=$(expand "$_opts")
-    echo "$_resolved_opts" > $_config
+    echo "$_resolved_opts" > $_opts_file
 }
 
 write_control() {
