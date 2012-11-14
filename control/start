@@ -6,8 +6,14 @@ control_dir="$(dirname $0)"
 . $control_dir/config
 . $control_dir/java/functions
 
-system_prop_opts="-Djava.io.tmpdir=\"$tmp_dir\" -Dapp.port=$port"
 java_opts="$(java_opts $control_dir)"
-cp_opt="-cp \"$classpath\""
 
-exec bash -c "$java $system_prop_opts $java_opts $cp_opt $class $args"
+exec bash -c "
+$java \
+   $java_opts \
+  -Djava.io.tmpdir=$tmp_dir \
+  -Dapp.port=$port \
+  cp \"$classpath\" \
+  $class \
+  $args
+"
