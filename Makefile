@@ -1,5 +1,5 @@
 plugin_name = java-plugin
-publish_repo = dev
+publish_repo = testing
 publish_url = s3://cloudbees-clickstack/$(publish_repo)/
 
 deps = lib/genapp-java.jar
