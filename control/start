@@ -13,7 +13,7 @@ $java \
    $java_opts \
   -Djava.io.tmpdir=$tmp_dir \
   -Dapp.port=$port \
-  cp \"$classpath\" \
+  -cp \"$classpath\" \
   $class \
   $args
 "
