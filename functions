@@ -2,6 +2,8 @@
 
 . "$genapp_functions/core"
 
+default_java_version=1.6
+
 java_plugin_dir() {
     _local_jar=$plugin_dir/lib/genapp-java.jar
     _java_embedded_jar=$plugin_dir/java/lib/genapp-java.jar
@@ -16,7 +18,7 @@ java_plugin_dir() {
 }
 
 find_java() {
-    _version=$(metadata java_version "1.7")
+    _version=$(metadata java_version $default_java_version)
     case "$_version" in
         "1.6") echo "/opt/java6/bin/java";;
         "1.7") echo "/opt/java7/bin/java";;
