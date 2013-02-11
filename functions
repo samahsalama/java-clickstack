@@ -2,7 +2,7 @@
 
 . "$genapp_functions/core"
 
-default_java_version=1.6
+default_java_version=1.7
 
 java_plugin_dir() {
     _local_jar=$plugin_dir/lib/genapp-java.jar
