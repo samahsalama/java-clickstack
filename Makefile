@@ -16,4 +16,5 @@ include plugin.mk
 lib/genapp-java.jar:
 	mkdir -p lib
 	curl -fLo lib/genapp-java.jar "$(java_agent_src)"
-	echo "$(java_agent_md5)  lib/genapp-java.jar" | md5sum --check
+	$(call check-md5,lib/genapp-java.jar,$(java_agent_md5))
+
