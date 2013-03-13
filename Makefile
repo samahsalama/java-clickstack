@@ -7,7 +7,7 @@ deps = lib/genapp-java.jar
 
 pkg_files = control functions lib LICENSE setup
 
-java_agent_ver = 20121113
+java_agent_ver = 20130313
 java_agent_src = https://s3.amazonaws.com/cloudbees-downloads/appserver/genapp-java-$(java_agent_ver).jar
 java_agent_md5 = 12e7dfa53fc066374a6a92e4a51fd06e
 
