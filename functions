@@ -3,6 +3,7 @@
 . "$genapp_functions/core"
 
 default_java_version=1.7
+default_java_jcepolicy=""
 
 java_plugin_dir() {
     _local_jar=$plugin_dir/lib/genapp-java.jar
@@ -19,16 +20,57 @@ java_plugin_dir() {
 
 find_java() {
     _version=$(metadata java_version $default_java_version)
+    _jcepolicy=$(metadata java_jcepolicy $default_java_jcepolicy)
+
+    if [ -z "$_jcepolicy" ]; then
+        find_standard_java("$_version");;
+    else
+        prepare_custom_java("$_version", "$_jcepolicy");; 
+    fi
+}
+
+find_standard_java(_version) {
     case "$_version" in
         "1.6") echo "/opt/java6/bin/java";;
         "1.7") echo "/opt/java7/bin/java";;
         "1.8") echo "/opt/java8/jre/bin/java";;
-	"system") which java;;
+        "system") which java;;
         *)
-	    echo "Unsupported java version $_version" 1>&2
-	    return 1
-	    ;;
+        echo "Unsupported java version $_version" 1>&2
+        return 1
+        ;;
     esac
+}
+
+prepare_custom_java(_version, _jcepolicy) {
+
+    case "$_version" in
+        "1.6") cp -r /opt/java6 $genapp_dir/java;;
+        "1.7") cp -r /opt/java7 $genapp_dir/java;;
+        "1.8") cp -r /opt/java8/jre $genapp_dir/java;;
+        *)
+        echo "Unsupported java version $_version" 1>&2
+        exit 1
+        ;;
+    esac
+
+    mkdir -p $app_dir/jce/META-INF/security
+
+    if [ -e "$pkg_dir/app.jar" ]; then
+          unzip $pkg_dir/app.jar "$_jcepolicy/*" -d $app_dir/jce
+    if [ -e "$pkg_dir/app.war" ]; then
+          unzip $pkg_dir/app.war "$_jcepolicy/*" -d $app_dir/jce
+    elif [ -e "$pkg_dir/app.ear" ]; then
+          unzip $pkg_dir/app.ear "$_jcepolicy/*" -d $app_dir/jce
+          # specific to staxcat
+          unzip $pkg_dir/app.ear webapp.war -d $app_dir/jce
+          unzip $app_dir/jce/webapp.war "$_jcepolicy/*" -d $app_dir/jce
+    else
+          cp -a $pkg_dir/META-INF/security* $app_dir/jce
+    fi
+
+    cp -f $app_dir/jce/META-INF/security/* $genapp_dir/java/lib/security
+    echo "$genapp_dir/java/"
 }
 
 install_java_control_functions() {
