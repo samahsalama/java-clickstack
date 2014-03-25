@@ -1,4 +1,4 @@
-plugin_name = java-plugin
+plugin_name = java-plugin-1.1.0
 publish_bucket = cloudbees-clickstack
 publish_repo = testing
 publish_url = s3://$(publish_bucket)/$(publish_repo)/
