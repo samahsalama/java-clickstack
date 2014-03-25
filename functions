@@ -25,10 +25,26 @@ find_java() {
         "1.8") echo "/opt/java8/jre/bin/java";;
 	"system") which java;;
         *)
-	    echo "Unsupported java version $_version" 1>&2
-	    return 1
+	    find_java_from_path "/opt/$_version"
+	    if [ "$?" != "0" ]; then
+		echo "Unsupported java version $_version" 1>&2
+		return 1
+	    fi
 	    ;;
     esac
+}
+
+find_java_from_path() {
+    _path=${1:?}
+    _exes=('bin/java' 'jre/bin/java')
+    for _subpath in ${_exes[@]}; do
+	_exe="$_path/$_subpath"
+	if [ -f "$_exe" ]; then
+	    echo "$_exe"
+	    return 0
+	fi
+    done
+    return 1
 }
 
 install_java_control_functions() {
