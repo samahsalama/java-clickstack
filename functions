@@ -4,6 +4,10 @@
 
 default_java_version=1.7
 
+install_java_plugin_functions() {
+    install -D "$plugin_dir/functions" "$genapp_dir/functions/java"
+}
+
 java_plugin_dir() {
     _local_jar=$plugin_dir/lib/genapp-java.jar
     _java_embedded_jar=$plugin_dir/java/lib/genapp-java.jar
@@ -140,6 +144,18 @@ write_java_opts() {
 
 write_control() {
     echo "Writing control scripts to $control_dir"
-    install -m 750 $plugin_dir/control/start $control_dir
     install -m 750 $plugin_dir/control/send_sigquit $control_dir
+}
+
+write_start_control() {
+    echo "Writing start control scripts to $control_dir"
+    install -m 750 $plugin_dir/control/start $control_dir
+}
+
+java_app_configured() {
+    if [ "$(metadata java_class '')" != "" ]; then
+	return 0
+    else
+	return 1
+    fi
 }

@@ -1,14 +1,18 @@
-#!/bin/bash
-
-set -u
-set -e
+#!/bin/bash -eu
 
 . "$plugin_dir/functions"
 
-create_app_skel
-install_app
-install_java_agent
+install_java_plugin_functions
 install_java_control_functions
-write_config
 write_java_opts
+install_java_agent
+
+if java_app_configured; then
+    create_app_skel
+    install_app
+    write_config
+    write_start_control
+fi
+
 write_control
+
