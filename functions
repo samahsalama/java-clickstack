@@ -26,7 +26,7 @@ find_java() {
     case "$_version" in
         "1.6") echo "/opt/java6/bin/java";;
         "1.7") echo "/opt/java7/bin/java";;
-        "1.8") echo "/opt/java8/jre/bin/java";;
+        "1.8") echo "/opt/java8/bin/java";;
 	"system") which java;;
         *)
 	    find_java_from_path "/opt/$_version"

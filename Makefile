@@ -1,4 +1,4 @@
-plugin_name = java-plugin-1.1.0
+plugin_name = java-plugin-1.1.1
 publish_bucket = cloudbees-clickstack
 publish_repo = testing
 publish_url = s3://$(publish_bucket)/$(publish_repo)/
@@ -7,9 +7,9 @@ deps = lib/genapp-java.jar
 
 pkg_files = control functions lib LICENSE setup
 
-java_agent_ver = 20130313
-java_agent_src = https://s3.amazonaws.com/cloudbees-downloads/appserver/genapp-java-$(java_agent_ver).jar
-java_agent_md5 = 44cd511782ea1924449bdb833c036762
+java_agent_ver = 1.2.1
+java_agent_src = http://central.maven.org/maven2/com/cloudbees/clickstack/cloudbees-clickstack-javaagent/$(java_agent_ver)/cloudbees-clickstack-javaagent-$(java_agent_ver).jar
+java_agent_md5 = e75476b9525c6b00639ef7105bdcef60
 
 include plugin.mk
 
