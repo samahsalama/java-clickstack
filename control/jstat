@@ -1,0 +1,13 @@
+#!/bin/bash
+set -e
+set -u
+
+control_dir="$(dirname $0)"
+. $control_dir/config
+. $control_dir/java/functions
+
+pidfile="$genapp_dir/app_pid"
+
+java_path="$(dirname $java)"
+
+$java_path/jstat -gccause -h20 "$(cat $pidfile)" 5s 3

@@ -145,6 +145,9 @@ write_java_opts() {
 write_control() {
     echo "Writing control scripts to $control_dir"
     install -m 750 $plugin_dir/control/send_sigquit $control_dir
+    install -m 750 $plugin_dir/control/jstat $control_dir
+    install -m 750 $plugin_dir/control/jstack $control_dir
+    install -m 750 $plugin_dir/control/du $control_dir
 }
 
 write_start_control() {
